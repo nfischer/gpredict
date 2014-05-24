@@ -1,4 +1,8 @@
+# my additions
+nfbuild
 compile
+
+# original .gitignore
 Makefile
 Makefile.in
 build-config.h
