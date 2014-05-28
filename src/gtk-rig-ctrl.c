@@ -1470,17 +1470,23 @@ static void exec_rx_cycle (GtkRigCtrl *ctrl)
     if ((ctrl->engaged) && (ctrl->lastrxf > 0.0)) {
         
         if (ptt == FALSE) {
-            if (!get_freq_simplex (ctrl, ctrl->sock, &readfreq)) {
+            if (!get_freq_simplex (ctrl, ctrl->sock, &readfreq)) { // readfreq is changed here (if successful)
                 /* error => use a passive value */
                 readfreq = ctrl->lastrxf;
                 ctrl->errcnt++;
+            }
+            else // NFDEBUG
+            {
+                printf("reading freq was successful\n"); // NFDEBUG
+                printf("old: %lf, new: %lf\n", (double)(ctrl->lastrxf), (double)readfreq);
             }
         }
         else {
             readfreq = ctrl->lastrxf;
         }
 
-        if (fabs (readfreq - ctrl->lastrxf) >= 1.0) {
+        if (fabs (readfreq - ctrl->lastrxf) >= 1.0) { // NFDEBUG
+            printf("Dial has changed\n\n");
             dialchanged = TRUE;
             
             /* user might have altered radio frequency => update transponder knob */
@@ -2286,11 +2292,17 @@ static gboolean get_freq_simplex (GtkRigCtrl *ctrl, gint sock, gdouble *freq)
     retcode=send_rigctld_command(ctrl,sock,buff,buffback,128);
     retcode=check_get_response(buffback,retcode,__FUNCTION__);
     if (retcode) {
-        vbuff = g_strsplit (buffback, "\n", 3);
-        if (vbuff[0])
-            *freq = g_ascii_strtod (vbuff[0], NULL);
-        else
+        vbuff = g_strsplit (buffback, "\n", 3); // splits buffback on newline
+        if (vbuff[0]) {
+            printf("There was a return code\n"); // NFDEBUG
+            printf("Your freq is : %s | ", vbuff[0]);
+            *freq = g_ascii_strtod (vbuff[0], NULL); // converts string to double
+            printf("%lf\n", *freq); // prints on same line as above statement
+        } else {
+            printf("Returning false\n"); // NFDEBUG
             retval = FALSE;
+        }
+
         g_strfreev (vbuff);
     } else {
        retval = FALSE;

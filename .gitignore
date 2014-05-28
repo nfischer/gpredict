@@ -1,6 +1,8 @@
 # my additions
 nfbuild
 compile
+*.swp
+*~
 
 # original .gitignore
 Makefile
