@@ -1477,7 +1477,6 @@ static void exec_rx_cycle (GtkRigCtrl *ctrl)
             }
             else // NFDEBUG
             {
-                printf("reading freq was successful\n"); // NFDEBUG
                 printf("old: %lf, new: %lf\n", (double)(ctrl->lastrxf), (double)readfreq);
             }
         }
@@ -2289,17 +2288,14 @@ static gboolean get_freq_simplex (GtkRigCtrl *ctrl, gint sock, gdouble *freq)
 
     buff = g_strdup_printf ("f\x0a");
 
+    // buffback is set in rigctld_command
     retcode=send_rigctld_command(ctrl,sock,buff,buffback,128);
     retcode=check_get_response(buffback,retcode,__FUNCTION__);
     if (retcode) {
         vbuff = g_strsplit (buffback, "\n", 3); // splits buffback on newline
         if (vbuff[0]) {
-            printf("There was a return code\n"); // NFDEBUG
-            printf("Your freq is : %s | ", vbuff[0]);
-            *freq = g_ascii_strtod (vbuff[0], NULL); // converts string to double
-            printf("%lf\n", *freq); // prints on same line as above statement
+            *freq = g_ascii_strtod (vbuff[0], NULL); // converts string to double (this seems to work)
         } else {
-            printf("Returning false\n"); // NFDEBUG
             retval = FALSE;
         }
 
