@@ -2653,6 +2653,7 @@ static gboolean is_rig_tx_capable (const gchar *confname)
 }
 
 
+// NFDEBUG this function sets buffback (buffout)
 gboolean send_rigctld_command(GtkRigCtrl *ctrl, gint sock, gchar *buff, gchar *buffout, gint sizeout)
 {
     gint    written;
@@ -2677,7 +2678,7 @@ gboolean send_rigctld_command(GtkRigCtrl *ctrl, gint sock, gchar *buff, gchar *b
         return FALSE;
     }
     /* try to read answer */
-    size = recv (sock, buffout, sizeout - 1, 0);
+    size = recv (sock, buffout, sizeout - 1, 0); // buffout is set in recv()
     if (size == -1) {
         sat_log_log (SAT_LOG_LEVEL_ERROR,
                      _("%s: rigctld port closed"),
